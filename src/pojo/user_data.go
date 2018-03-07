@@ -7,4 +7,5 @@ type UserData struct {
 	Language string `json:"language"`
 	Location string `json:"location"`
 	Provider string `json:"provider"`
+	RefreshToken string `json:"-"`
 }

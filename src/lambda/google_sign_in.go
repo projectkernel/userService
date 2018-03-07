@@ -1,23 +1,25 @@
-package functions
+package lambda
 
 import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"auth/src/sign-in/google"
+	"auth/src/signin/google"
 	"encoding/json"
 	"auth/src/pojo"
 	"errors"
+	"auth/src/signin"
 )
 
 type Result struct {
-	User pojo.User `json:"user"`
+	User *pojo.User `json:"user"`
 	Token string `json:"token"`
 }
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	var auth pojo.AuthCode
+	controller := signin.NewModel(google.New("", ""))
 	json.Unmarshal([]byte(request.Body), &auth)
-	user, token, err := google.SignIn(auth.Code)
+	user, token, err := controller.SignIn(auth.Code)
 	if err != nil {
 		return events.APIGatewayProxyResponse{StatusCode: 404}, err
 	}
@@ -25,7 +27,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return events.APIGatewayProxyResponse{
 			StatusCode: 500,
-		}, errors.New("could not create valid response")
+		}, errors.New("could not create a valid response")
 	}
 	return events.APIGatewayProxyResponse{
 		Body: string(result),
