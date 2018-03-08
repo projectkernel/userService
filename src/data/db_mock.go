@@ -2,7 +2,7 @@
 // Source: src/persistance/db.go
 
 // Package mock_persistance is a generated GoMock package.
-package persistance
+package data
 
 import (
 	pojo "auth/src/pojo"
