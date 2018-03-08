@@ -1,5 +1,5 @@
 package format
 
 type Formatter interface {
-	Format(interface{}) string
+	Format(interface{}) (string, error)
 }

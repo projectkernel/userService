@@ -2,23 +2,23 @@ package format
 
 import (
 	"encoding/json"
+	"auth/src/apierror"
 )
 
 type JsonFormatter struct {
-	fallback string
+	errHandler apierror.Handler
 }
 
-func NewJsonFormatter(fallback string) *JsonFormatter{
+func NewJsonFormatter(errHandler apierror.Handler) *JsonFormatter{
 	return &JsonFormatter{
-		fallback:fallback,
+		errHandler:errHandler,
 	}
 }
 
-// TODO Provide Fallback ensurance
-func (format JsonFormatter) Format(val interface{}) (string) {
+func (format JsonFormatter) Format(val interface{}) (string, error) {
 	result, err := json.Marshal(val)
 	if err != nil {
-		return format.fallback
+		return "", err
 	}
-	return string(result)
+	return string(result), nil
 }

@@ -1,4 +1,4 @@
-package operation
+package pipeline
 
 import (
 	"auth/src/data"
@@ -6,10 +6,10 @@ import (
 )
 
 type Provider struct {
-	prov      data.Provider
+	prov      data.SocialProvider
 }
 
-func NewProvider(prov data.Provider) *Provider {
+func NewProvider(prov data.SocialProvider) *Provider {
 	return &Provider{
 		prov:      prov,
 	}

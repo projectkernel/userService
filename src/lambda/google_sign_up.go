@@ -2,7 +2,7 @@ package main
 
 import (
 	"auth/src/data/mongo"
-	"auth/src/operation"
+	"auth/src/pipeline"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"auth/src/pojo"
@@ -10,6 +10,8 @@ import (
 	"auth/src/controller"
 	"auth/src/format"
 	"encoding/json"
+	"auth/src/view"
+	"auth/src/apierror"
 )
 
 var session, err = mongo.GetWithCredentials(
@@ -19,22 +21,22 @@ var session, err = mongo.GetWithCredentials(
 	"",
 	true)
 var db = mongo.NewMongo(session)
-var persistent = operation.NewPersistent(db)
-var prov = google.NewProvider("", "")
-var provider = operation.NewProvider(prov)
-var fmt = format.NewJsonFormatter(`{"message": Could not parse JSON}`)
-var ctrl = controller.NewProviderPersistence(persistent, provider, fmt)
+var googleProv = google.NewProvider("", "")
+var provPip = pipeline.NewProvider(googleProv)
+var ctrl = controller.NewProviderPersistence(provPip, db)
+var formatter = format.NewJsonFormatter(&apierror.SimpleHandler{})
+var aws = view.NewLambda(formatter, &apierror.SimpleHandler{})
 
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	// Could not open a session with database
+	if err != nil {
+		return aws.Transform(nil, err)
+	}
 	var auth pojo.AuthCode
 	json.Unmarshal([]byte(request.Body), &auth)
-	return events.APIGatewayProxyResponse{
-		Body: ctrl.SocialSignUp(auth.Code),
-		StatusCode: 200,
-		}, nil
+	return aws.Transform(ctrl.SocialSignUp(auth.Code))
 }
 
 func main() {
 	lambda.Start(Handler)
-
 }

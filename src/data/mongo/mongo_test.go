@@ -25,13 +25,8 @@ func TestCreate(t *testing.T) {
 		Provider: "google",
 		RefreshToken: "randomtoken",
 	}
-	result, err := crud.Create(user)
+	err := crud.Create(user)
 	if err != nil {
 		log.Fatal(err)
 	}
-	x, err := json.Marshal(result)
-	if err != nil {
-		t.Fatal(err)
-	}
-	fmt.Print(string(x))
 }
