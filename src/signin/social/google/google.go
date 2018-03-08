@@ -6,13 +6,15 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
 	"auth/src/pojo"
+	"fmt"
+	"errors"
 )
 
-type provider struct {
+type Provider struct {
 	config *oauth2.Config
 }
 
-func New(clientId string, clientSecret string) *provider {
+func New(clientId string, clientSecret string) *Provider {
 	config := &oauth2.Config{
 		ClientID:     clientId,
 		ClientSecret: clientSecret,
@@ -26,12 +28,12 @@ func New(clientId string, clientSecret string) *provider {
 		// Use "postmessage" for the code-flow for server side apps
 		RedirectURL: "postmessage",
 	}
-	return &provider{
+	return &Provider{
 		config: config,
 	}
 }
 
-func (provider provider) Auth(authCode string) (accessToken string, refreshToken string, err error){
+func (provider Provider) Auth(authCode string) (accessToken string, refreshToken string, err error){
 	token, err := provider.config.Exchange(context.Background(), authCode)
 	if err != nil {
 		return "", "", err
@@ -39,7 +41,7 @@ func (provider provider) Auth(authCode string) (accessToken string, refreshToken
 	return token.AccessToken, token.RefreshToken, nil
 }
 
-func (provider) Info(accessToken string) (user *pojo.User, err error){
+func (Provider) Info(accessToken string) (user *pojo.User, err error){
 	// Create a new authorized API client
 	token := new(oauth2.Token)
 	token.AccessToken = accessToken
@@ -64,3 +66,8 @@ func (provider) Info(accessToken string) (user *pojo.User, err error){
 	}
 	return user, nil
 }
+
+func (provider Provider) GetData(authCode string) (user *pojo.User, accessToken string, err error) {
+	return getData(provider, authCode)
+}
+

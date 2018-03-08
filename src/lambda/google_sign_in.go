@@ -3,7 +3,7 @@ package lambda
 import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"auth/src/signin/google"
+	"auth/src/signin/social/google"
 	"encoding/json"
 	"auth/src/pojo"
 	"errors"

@@ -8,16 +8,16 @@ import (
 )
 
 type Model struct {
-	db *persistance.DB
+	db persistance.DB
 }
 
-func NewModel(db *persistance.DB) *Model {
+func NewModel(db persistance.DB) *Model {
 	return &Model{
 		db: db,
 	}
 }
 
-func (m Model) SignIn(method Method, authCode string) (user *pojo.User, accessToken string, err error) {
+func (model Model) SignIn(method Method, authCode string) (user *pojo.User, accessToken string, err error) {
 	accessToken, refreshToken, err := method.Auth(authCode)
 	fmt.Print(refreshToken)
 	if err != nil {
@@ -28,7 +28,7 @@ func (m Model) SignIn(method Method, authCode string) (user *pojo.User, accessTo
 		return user, "", errors.New("could not get required data")
 	}
 	userData.RefreshToken = refreshToken
-	user, err = m.db.Create(userData)
+	user, err = model.db.Create(userData)
 	// Erases refreshToken after it is already saved
 	userData.RefreshToken = ""
 	if err != nil {

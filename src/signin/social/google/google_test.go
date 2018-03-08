@@ -4,6 +4,7 @@ package google
 import (
 	"testing"
 	"encoding/json"
+	"auth/src/pojo"
 )
 
 // Those Tests can be only manually tested (Thanks Google)
