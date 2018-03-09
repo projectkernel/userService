@@ -5,7 +5,7 @@ import (
 	"auth/src/pipeline"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"auth/src/pojo"
+	"auth/src/kind"
 	"auth/src/data/google"
 	"auth/src/controller"
 	"auth/src/format"
@@ -32,7 +32,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		return aws.Transform(nil, err)
 	}
-	var auth pojo.AuthCode
+	var auth kind.AuthCode
 	json.Unmarshal([]byte(request.Body), &auth)
 	return aws.Transform(ctrl.SocialSignUp(auth.Code))
 }

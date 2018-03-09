@@ -4,7 +4,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2/google"
-	"auth/src/pojo"
+	"auth/src/kind"
 	"google.golang.org/api/plus/v1"
 )
 
@@ -39,7 +39,7 @@ func (prov Provider) Exchange(authCode string) (accessToken string, refreshToken
 	return token.AccessToken, token.RefreshToken, nil
 }
 
-func (Provider) Info(accessToken string) (user *pojo.User, err error) {
+func (Provider) Info(accessToken string) (user *kind.User, err error) {
 	// Create a new authorized API client
 	token := new(oauth2.Token)
 	token.AccessToken = accessToken
@@ -54,7 +54,7 @@ func (Provider) Info(accessToken string) (user *pojo.User, err error) {
 		return user, err
 	}
 
-	user = &pojo.User{
+	user = &kind.User{
 		Name: data.DisplayName,
 		Email: data.Emails[0].Value,
 		ImageURL: data.Image.Url,

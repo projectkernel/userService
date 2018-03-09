@@ -1,12 +1,12 @@
 package apierror
 
-import "auth/src/pojo"
+import "auth/src/kind"
 
 type SimpleHandler struct {}
 
 // TODO Implement
-func (SimpleHandler) Handle(err error) *pojo.ApiError {
-	return &pojo.ApiError{
+func (SimpleHandler) Handle(err error) *kind.ApiError {
+	return &kind.ApiError{
 		Message: "undefined error occurred",
 		Code: UNKNOWN,
 	}

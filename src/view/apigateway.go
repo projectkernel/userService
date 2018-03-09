@@ -29,11 +29,12 @@ func (aws Lambda) Transform(value interface{}, err error) (events.APIGatewayProx
 		str, err = aws.formatter.Format(aws.errHandler.Handle(err))
 		if err != nil {
 			return events.APIGatewayProxyResponse{
-				StatusCode:500,
+				StatusCode: 500,
 			}, nil
 		}
 	}
 	return events.APIGatewayProxyResponse {
 		Body: str,
 	}, nil
+
 }

@@ -1,9 +1,8 @@
-package pojo
+package kind
 
 type User struct {
-	Id string `json:"id,omitempty" bson:"_id,omitempty"`
 	Name string `json:"name"`
-	Email string `json:"email"`
+	Email string `json:"email" bson:"_id,omitempty"`
 	ImageURL string `json:"imageURL"`
 	Language string `json:"language"`
 	Location string `json:"location"`

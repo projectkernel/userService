@@ -1,7 +1,7 @@
 package apierror
 
-import "auth/src/pojo"
+import "auth/src/kind"
 
 type Handler interface {
-	Handle(err error) *pojo.ApiError
+	Handle(err error) *kind.ApiError
 }

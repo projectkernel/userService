@@ -3,46 +3,54 @@ package controller
 import (
 	"auth/src/pipeline"
 	"auth/src/data"
-	"auth/src/pojo"
+	"auth/src/kind"
+	"auth/src/auth"
+	"auth/src/util"
 )
 
 type ProviderPersistence struct {
-	db     data.DB
 	prov   *pipeline.Provider
+	validator data.Validator
+	db     data.DB
+	cleaner data.Cleaner
+	encryption auth.Encryption
 }
 
-func NewProviderPersistence(prov *pipeline.Provider, db data.DB) *ProviderPersistence {
+func NewProviderPersistence(prov *pipeline.Provider, db data.DB, encryption auth.Encryption) *ProviderPersistence {
 	return &ProviderPersistence{
 		prov:   prov,
 		db:     db,
+		encryption: encryption,
 	}
 }
 
 type Result struct {
-	User *pojo.User `json:"user"`
-	Token string `json:"token"`
+	User *kind.User `json:"user"`
+	Token string     `json:"token"`
 }
 
-// Return type based on Formatter Template
 func (ctrl ProviderPersistence) SocialSignUp(token string) (res *Result, err error) {
 	user, err := ctrl.prov.GetUserFromProvider(token)
 	if err != nil {
 		return res, err
 	}
-	err = ctrl.db.Create(user)
-	if err != nil {
-		return res, err
-	}
-	// Erases refreshToken after it is already saved
-	user.RefreshToken = ""
-	user, err =ctrl.db.Find("TODO")
-	if err != nil {
-		return res, err
-	}
-	// TODO Use JWT
+	user, err = util.PipeUserOps([]kind.UserOp{
+		ctrl.validator.Validate,
+		ctrl.db.Upsert,
+		ctrl.cleaner.Clean,
+	}, user)
+	//user, err = ctrl.validator.Validate(user)
+	//if err != nil {
+	//	return res, err
+	//}
+	//user, err = ctrl.db.Upsert(user)
+	//if err != nil {
+	//	return res, err
+	//}
+	//user = ctrl.cleaner.Clean(user)
 	res = &Result{
-		User:user,
-		Token:"",
+		User: user,
+		Token: ctrl.encryption.Encrypt(user.Email),
 	}
 	return res, nil
 }

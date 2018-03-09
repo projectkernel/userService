@@ -1,4 +1,4 @@
-package pojo
+package kind
 
 type ApiError struct {
     Message string `json:"message"`

@@ -2,7 +2,7 @@ package pipeline
 
 import (
 	"auth/src/data"
-	"auth/src/pojo"
+	"auth/src/kind"
 )
 
 type Provider struct {
@@ -15,7 +15,7 @@ func NewProvider(prov data.SocialProvider) *Provider {
 	}
 }
 
-func (prov Provider) GetUserFromProvider(token string) (user *pojo.User, err error) {
+func (prov Provider) GetUserFromProvider(token string) (user *kind.User, err error) {
 	access, refresh, err := prov.prov.Exchange(token)
 	if err != nil {
 		return user, err
